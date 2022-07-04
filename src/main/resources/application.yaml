@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/JC_fileHosting?serverTimezone=Europe/Warsaw&useSSL=False&allowPublicKeyRetrieval=true
+    username: jc
+    password: jc
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
