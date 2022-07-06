@@ -1,5 +1,6 @@
 package kots.service;
 
+import kots.controller.mapper.FileMapper;
 import kots.exception.CannotProcessedFileException;
 import kots.exception.IncorrectFileTypeException;
 import kots.exception.NoFileException;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kots.controller.mapper.FileMapper.toFile;
+
 @Component
 public class FileValidator {
 
@@ -20,26 +23,18 @@ public class FileValidator {
 
     public File validate(MultipartFile file) {
         checkFileIsAllRight(file);
-        try {
-            return File.builder()
-                    .name(file.getOriginalFilename())
-                    .type(file.getContentType())
-                    .data(file.getBytes())
-                    .build();
-        } catch (IOException e) {
-            throw new CannotProcessedFileException("Cannot processed this file");
-        }
+        return toFile(file);
     }
 
     private void checkFileIsAllRight(MultipartFile file) {
-        if(!fileExtensionIsAcceptable(checkFileIsExist(file).getContentType())) {
+        if(!isAcceptableExtension(checkFileIsExist(file).getContentType())) {
             String extensions = acceptableExtensionFile.stream()
                     .collect(Collectors.joining(", "));
             throw new IncorrectFileTypeException("Incorrect file type. Required: " + extensions);
         }
     }
 
-    private boolean fileExtensionIsAcceptable(String contentType) {
+    private boolean isAcceptableExtension(String contentType) {
         return acceptableExtensionFile.contains(contentType);
     }
 

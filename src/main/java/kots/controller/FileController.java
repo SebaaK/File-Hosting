@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import static kots.controller.mapper.FileMapper.mapToIdNameTypeDto;
+import static kots.controller.mapper.FileMapper.toFileDto;
 
 @RestController
 @RequestMapping("/api/files")
@@ -22,6 +22,6 @@ public class FileController {
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<FileDto> uploadFile(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapToIdNameTypeDto(fileService.store(file)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toFileDto(fileService.store(file)));
     }
 }
