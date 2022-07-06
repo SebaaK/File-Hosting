@@ -9,3 +9,5 @@ spring:
       ddl-auto: create-drop
   jackson:
     default-property-inclusion: non_null
+app:
+  acceptableExtensionFileList: application/pdf
