@@ -1,5 +1,6 @@
 package kots.controller;
 
+import kots.controller.dto.FileDto;
 import kots.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import static kots.controller.mapper.FileMapper.mapToIdNameTypeDto;
 
 @RestController
 @RequestMapping("/api/files")
@@ -19,11 +23,11 @@ public class FileController {
 
     private final FileService fileService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    public ResponseEntity<FileDto> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         if(!file.isEmpty())
-            return ResponseEntity.status(HttpStatus.CREATED).body(fileService.store(file));
+            return ResponseEntity.status(HttpStatus.CREATED).body(mapToIdNameTypeDto(fileService.store(file)));
         else
-            return ResponseEntity.badRequest().body("File is empty!");
+            throw new FileNotFoundException("File not found!");
     }
 }
