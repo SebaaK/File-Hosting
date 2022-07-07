@@ -7,3 +7,7 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
+  jackson:
+    default-property-inclusion: non_null
+files:
+  acceptableExtensionFileList: application/pdf
