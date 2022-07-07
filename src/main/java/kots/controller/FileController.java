@@ -1,11 +1,13 @@
 package kots.controller;
 
-import kots.controller.dto.FileDto;
+import kots.controller.dto.FileDownloadDto;
 import kots.controller.dto.FileMetadataDto;
 import kots.service.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,11 +32,12 @@ public class FileController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable long id) {
-        FileDto fileDto = fileService.getFile(id);
+    public ResponseEntity<Resource> getFile(@PathVariable long id) {
+        FileDownloadDto fileDto = fileService.getFile(id);
         return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(fileDto.getType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDto.getName() + "\"")
-                .body(fileDto.getData());
+                .body(fileDto.getFileResource());
     }
 
     @GetMapping

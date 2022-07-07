@@ -1,17 +1,17 @@
 package kots.service;
 
-import kots.controller.dto.FileDto;
+import kots.controller.dto.FileDownloadDto;
 import kots.controller.dto.FileMetadataDto;
 import kots.exception.NoFileException;
 import kots.model.File;
 import kots.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static kots.service.mapper.FileMapper.toFileDto;
 import static kots.service.mapper.FileMapper.toFileMetaDataDto;
 
 @Service
@@ -26,9 +26,14 @@ public class FileService {
         return toFileMetaDataDto(fileRepository.save(validateFile));
     }
 
-    public FileDto getFile(long id) {
-        return toFileDto(fileRepository.findById(id)
-                .orElseThrow(() -> new NoFileException("File not exist!")));
+    public FileDownloadDto getFile(long id) {
+        File file = fileRepository.findById(id)
+                .orElseThrow(() -> new NoFileException("File not exist!"));
+        return FileDownloadDto.builder()
+                .name(file.getName())
+                .type(file.getType())
+                .fileResource(new ByteArrayResource(file.getData()))
+                .build();
     }
 
     public List<FileMetadataDto> getAllFiles() {
