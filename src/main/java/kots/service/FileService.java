@@ -1,8 +1,9 @@
 package kots.service;
 
 import kots.controller.dto.FileDto;
-import kots.controller.dto.FileMetaDataDto;
+import kots.controller.dto.FileMetadataDto;
 import kots.exception.NoFileException;
+import kots.model.File;
 import kots.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,9 @@ public class FileService {
     private final FileRepository fileRepository;
     private final FileValidator fileValidator;
 
-    public FileMetaDataDto store(MultipartFile file) {
-        return toFileMetaDataDto(fileRepository.save(fileValidator.validate(file)));
+    public FileMetadataDto store(MultipartFile file) {
+        File validateFile = fileValidator.validate(file);
+        return toFileMetaDataDto(fileRepository.save(validateFile));
     }
 
     public FileDto getFile(long id) {
@@ -29,7 +31,7 @@ public class FileService {
                 .orElseThrow(() -> new NoFileException("File not exist!")));
     }
 
-    public List<FileMetaDataDto> getAllFiles() {
+    public List<FileMetadataDto> getAllFiles() {
         return toFileMetaDataDto(fileRepository.findAll());
     }
 }

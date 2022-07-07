@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class FileMetaDataDto {
+public class FileMetadataDto {
 
     private Long id;
     private String name;

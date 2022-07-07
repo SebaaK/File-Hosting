@@ -1,7 +1,7 @@
 package kots.controller;
 
 import kots.controller.dto.FileDto;
-import kots.controller.dto.FileMetaDataDto;
+import kots.controller.dto.FileMetadataDto;
 import kots.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -26,7 +25,7 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<FileMetaDataDto> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<FileMetadataDto> uploadFile(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.status(HttpStatus.CREATED).body(fileService.store(file));
     }
 
@@ -39,7 +38,7 @@ public class FileController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FileMetaDataDto>> getAllFiles() {
+    public ResponseEntity<List<FileMetadataDto>> getAllFiles() {
         return ResponseEntity.ok(fileService.getAllFiles());
     }
 }
