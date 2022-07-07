@@ -15,27 +15,23 @@ import static kots.service.mapper.FileMapper.toFile;
 @Component
 public class FileValidator {
 
-    @Value("#{'${app.acceptableExtensionFileList}'.split(',')}")
+    @Value("#{'${files.acceptableExtensionFileList}'.split(',')}")
     private List<String> acceptableExtensionFile;
 
     public File validate(MultipartFile file) {
-        checkFileIsAllRight(file);
-        return toFile(file);
-    }
-
-    private void checkFileIsAllRight(MultipartFile file) {
-        if(!isAcceptableExtension(checkFileIsExist(file).getContentType())) {
+        if(!isSupportedExtension(checkIfFileExists(file).getContentType())) {
             String extensions = acceptableExtensionFile.stream()
                     .collect(Collectors.joining(", "));
             throw new IncorrectFileTypeException("Incorrect file type. Required: " + extensions);
         }
+        return toFile(file);
     }
 
-    private boolean isAcceptableExtension(String contentType) {
+    private boolean isSupportedExtension(String contentType) {
         return acceptableExtensionFile.contains(contentType);
     }
 
-    private MultipartFile checkFileIsExist(MultipartFile file) {
+    private MultipartFile checkIfFileExists(MultipartFile file) {
         if(!file.isEmpty())
             return file;
         else

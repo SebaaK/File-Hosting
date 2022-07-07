@@ -1,7 +1,8 @@
 package kots.service;
 
-import kots.model.File;
+import kots.controller.dto.FileDto;
 import kots.repository.FileRepository;
+import kots.service.mapper.FileMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +14,7 @@ public class FileService {
     private final FileRepository fileRepository;
     private final FileValidator fileValidator;
 
-    public File store(MultipartFile file) {
-        return fileRepository.save(fileValidator.validate(file));
+    public FileDto store(MultipartFile file) {
+        return FileMapper.toFileDto(fileRepository.save(fileValidator.validate(file)));
     }
 }
