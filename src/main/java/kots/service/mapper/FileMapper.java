@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class FileMapper {
 
@@ -28,8 +30,8 @@ public class FileMapper {
                 .build();
     }
 
-    public static List<FileMetadataDto> toFileMetaDataDto(List<File> fileList) {
-        return fileList.stream()
+    public static List<FileMetadataDto> toFileMetaDataDto(Iterable<File> fileList) {
+        return StreamSupport.stream(fileList.spliterator(), false)
                 .map(FileMapper::toFileMetaDataDto)
                 .toList();
     }

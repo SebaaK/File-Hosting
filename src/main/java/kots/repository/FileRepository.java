@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface FileRepository extends CrudRepository<File, Long> {
 
-    List<File> findAll();
 }
