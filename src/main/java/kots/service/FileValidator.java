@@ -1,7 +1,5 @@
 package kots.service;
 
-import kots.controller.mapper.FileMapper;
-import kots.exception.CannotProcessedFileException;
 import kots.exception.IncorrectFileTypeException;
 import kots.exception.NoFileException;
 import kots.model.File;
@@ -9,11 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kots.controller.mapper.FileMapper.toFile;
+import static kots.service.mapper.FileMapper.toFile;
 
 @Component
 public class FileValidator {

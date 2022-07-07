@@ -1,4 +1,4 @@
-package kots.controller.mapper;
+package kots.service.mapper;
 
 import kots.exception.CannotProcessedFileException;
 import kots.model.File;
