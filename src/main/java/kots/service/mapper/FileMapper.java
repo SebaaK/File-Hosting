@@ -1,11 +1,14 @@
 package kots.service.mapper;
 
+import kots.controller.dto.FileDto;
+import kots.controller.dto.FileMetaDataDto;
 import kots.exception.CannotProcessedFileException;
 import kots.model.File;
-import kots.controller.dto.FileDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileMapper {
 
@@ -14,7 +17,22 @@ public class FileMapper {
                 .id(file.getId())
                 .name(file.getName())
                 .type(file.getType())
+                .data(file.getData())
                 .build();
+    }
+
+    public static FileMetaDataDto toFileMetaDataDto(File file) {
+        return FileMetaDataDto.builder()
+                .id(file.getId())
+                .name(file.getName())
+                .type(file.getType())
+                .build();
+    }
+
+    public static List<FileMetaDataDto> toFileMetaDataDto(List<File> fileList) {
+        return fileList.stream()
+                .map(FileMapper::toFileMetaDataDto)
+                .collect(Collectors.toList());
     }
 
     public static File toFile(MultipartFile file) {
