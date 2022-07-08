@@ -41,7 +41,7 @@ public class FileController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FileMetadataDto>> getAllFiles() {
+    public ResponseEntity<List<FileMetadataDto>> getFiles() {
         return ResponseEntity.ok(fileService.getAllFiles());
     }
 }
