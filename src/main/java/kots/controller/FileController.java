@@ -43,12 +43,12 @@ public class FileController {
 
     @GetMapping
     public ResponseEntity<List<FileMetadataDto>> getFiles() {
-        return ResponseEntity.ok(fileService.getAllFiles());
+        return ResponseEntity.ok(fileService.getFiles());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFile(@PathVariable long id) {
         fileService.deleteFile(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

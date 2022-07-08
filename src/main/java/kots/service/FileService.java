@@ -10,6 +10,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static kots.service.mapper.FileMapper.toFileMetaDataDto;
@@ -40,7 +41,7 @@ public class FileService {
                 .orElseThrow(() -> new NoFileException("File not exist!"));
     }
 
-    public List<FileMetadataDto> getAllFiles() {
+    public List<FileMetadataDto> getFiles() {
         return toFileMetaDataDto(fileRepository.findAll());
     }
 
