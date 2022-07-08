@@ -10,6 +10,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static kots.service.mapper.FileMapper.toFileMetaDataDto;
@@ -27,8 +28,7 @@ public class FileService {
     }
 
     public FileDownloadDto getFile(long id) {
-        File file = fileRepository.findById(id)
-                .orElseThrow(() -> new NoFileException("File not exist!"));
+        File file = getSingleFile(id);
         return FileDownloadDto.builder()
                 .name(file.getName())
                 .type(file.getType())
@@ -36,7 +36,17 @@ public class FileService {
                 .build();
     }
 
-    public List<FileMetadataDto> getAllFiles() {
+    private File getSingleFile(long id) {
+        return fileRepository.findById(id)
+                .orElseThrow(() -> new NoFileException("File not exist!"));
+    }
+
+    public List<FileMetadataDto> getFiles() {
         return toFileMetaDataDto(fileRepository.findAll());
+    }
+
+    public void deleteFile(long id) {
+        File file = getSingleFile(id);
+        fileRepository.delete(file);
     }
 }
