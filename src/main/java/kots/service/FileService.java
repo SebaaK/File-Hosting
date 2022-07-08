@@ -27,8 +27,7 @@ public class FileService {
     }
 
     public FileDownloadDto getFile(long id) {
-        File file = fileRepository.findById(id)
-                .orElseThrow(() -> new NoFileException("File not exist!"));
+        File file = getSingleFile(id);
         return FileDownloadDto.builder()
                 .name(file.getName())
                 .type(file.getType())
@@ -36,7 +35,17 @@ public class FileService {
                 .build();
     }
 
+    private File getSingleFile(long id) {
+        return fileRepository.findById(id)
+                .orElseThrow(() -> new NoFileException("File not exist!"));
+    }
+
     public List<FileMetadataDto> getAllFiles() {
         return toFileMetaDataDto(fileRepository.findAll());
+    }
+
+    public void deleteFile(long id) {
+        File file = getSingleFile(id);
+        fileRepository.delete(file);
     }
 }
