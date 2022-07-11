@@ -14,7 +14,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,14 +50,9 @@ class FileControllerTest {
     private FileRepository fileRepository;
 
     @Test
-    @Transactional
     void shouldSaveFileEntityInDatabase() throws Exception {
         // given
-        MockMultipartFile fileToSave = new MockMultipartFile(
-                "file",
-                "file.pdf",
-                PDF_CONTENT_TYPE,
-                "TestFile".getBytes());
+        MockMultipartFile fileToSave = generateMockFile("file.pdf", PDF_CONTENT_TYPE);
 
         // when & then
         MvcResult mvcResult = mockMvc.perform(multipart(BASE_URL_FILE_ENDPOINT).file(fileToSave))
@@ -74,7 +68,7 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldGetNotFoundStatusWhenNoFileIfTryToCallToSaveFile() throws Exception {
+    void shouldReceiveNotFoundStatusWhenNoFileIfTryToCallToSaveFile() throws Exception {
         // given
         MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
 
@@ -85,13 +79,9 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldGetNotAcceptableStatusResponseWhenFileExtensionIsNotSupported() throws Exception {
+    void shouldReceiveNotAcceptableStatusResponseWhenFileExtensionIsNotSupported() throws Exception {
         // given
-        MockMultipartFile badFile = new MockMultipartFile(
-                "file",
-                "file.txt",
-                "text/plain",
-                "TestFile".getBytes());
+        MockMultipartFile badFile = generateMockFile("file.txt", "text/plain");
 
         // when & then
         mockMvc.perform(multipart(BASE_URL_FILE_ENDPOINT).file(badFile).contentType(MediaType.MULTIPART_FORM_DATA))
@@ -100,7 +90,6 @@ class FileControllerTest {
     }
 
     @Test
-    @Transactional
     void shouldGetFileToDownload() throws Exception {
         // given
         File saveFile = fileRepository.save(new File(null, "test.pdf", PDF_CONTENT_TYPE, "TestFile".getBytes()));
@@ -114,26 +103,31 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldNotFoundStatusResponseWhenGetNotExistIdFile() throws Exception {
+    void shouldReceiveNotFoundStatusResponseWhenGetNotExistIdFile() throws Exception {
+        // given
+        fileRepository.deleteAll();
+
+        // when & then
         mockMvc.perform(get(BASE_URL_FILE_ENDPOINT + "/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath(MESSAGE_PATH_RESPONSE, is("File not exist!")));
     }
 
     @Test
-    @Transactional
     void shouldFetchFilesList() throws Exception {
         // given
-        Iterable<File> files = fileRepository.saveAll(getRandomFileList(ARRAY_COUNT));
+        fileRepository.saveAll(getRandomFileList(ARRAY_COUNT));
 
         // when & then
-        mockMvc.perform(get(BASE_URL_FILE_ENDPOINT))
+        MvcResult mvcResult = mockMvc.perform(get(BASE_URL_FILE_ENDPOINT))
                 .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$", hasSize(ARRAY_COUNT)));
+                .andReturn();
+
+        FileMetadataDto[] fileMetadataDtoList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), FileMetadataDto[].class);
+        assertThat(fileMetadataDtoList).hasSizeGreaterThanOrEqualTo(ARRAY_COUNT);
     }
 
     @Test
-    @Transactional
     void shouldDeleteFileEntityFromDatabase() throws Exception {
         // given
         Iterable<File> files = fileRepository.saveAll(getRandomFileList(ARRAY_COUNT));
@@ -143,6 +137,14 @@ class FileControllerTest {
         mockMvc.perform(delete(BASE_URL_FILE_ENDPOINT + "/" + idFirstSaveFile))
                 .andExpect(status().isNoContent());
         assertFalse(fileRepository.existsById(idFirstSaveFile));
+    }
+
+    private MockMultipartFile generateMockFile(String originalFilename, String contentType) {
+        return new MockMultipartFile(
+                "file",
+                originalFilename,
+                contentType,
+                "TestFile".getBytes());
     }
 
     private Long getIdFileFromIterable(Iterable<File> files) {
