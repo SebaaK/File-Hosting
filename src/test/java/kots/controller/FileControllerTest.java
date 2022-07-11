@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class FileControllerTest {
+public class FileControllerTest {
 
     public static final String BASE_URL_FILE_ENDPOINT = "/api/files";
     public static final String MESSAGE_PATH_RESPONSE = "$.message";
@@ -50,7 +50,7 @@ class FileControllerTest {
     private FileRepository fileRepository;
 
     @Test
-    void shouldSaveFileEntityInDatabase() throws Exception {
+    public void shouldSaveFileEntityInDatabase() throws Exception {
         // given
         MockMultipartFile fileToSave = generateMockFile("file.pdf", PDF_CONTENT_TYPE);
 
@@ -68,7 +68,7 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldReceiveNotFoundStatusWhenNoFileIfTryToCallToSaveFile() throws Exception {
+    public void shouldReceiveNotFoundStatusWhenNoFileIfTryToCallToSaveFile() throws Exception {
         // given
         MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
 
@@ -79,7 +79,7 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldReceiveNotAcceptableStatusResponseWhenFileExtensionIsNotSupported() throws Exception {
+    public void shouldReceiveNotAcceptableStatusResponseWhenFileExtensionIsNotSupported() throws Exception {
         // given
         MockMultipartFile badFile = generateMockFile("file.txt", "text/plain");
 
@@ -90,7 +90,7 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldGetFileToDownload() throws Exception {
+    public void shouldGetFileToDownload() throws Exception {
         // given
         File saveFile = fileRepository.save(new File(null, "test.pdf", PDF_CONTENT_TYPE, "TestFile".getBytes()));
 
@@ -103,7 +103,7 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldReceiveNotFoundStatusResponseWhenGetNotExistIdFile() throws Exception {
+    public void shouldReceiveNotFoundStatusResponseWhenGetNotExistIdFile() throws Exception {
         // given
         fileRepository.deleteAll();
 
@@ -114,7 +114,7 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldFetchFilesList() throws Exception {
+    public void shouldFetchFilesList() throws Exception {
         // given
         fileRepository.saveAll(getRandomFileList(ARRAY_COUNT));
 
@@ -128,7 +128,7 @@ class FileControllerTest {
     }
 
     @Test
-    void shouldDeleteFileEntityFromDatabase() throws Exception {
+    public void shouldDeleteFileEntityFromDatabase() throws Exception {
         // given
         Iterable<File> files = fileRepository.saveAll(getRandomFileList(ARRAY_COUNT));
         Long idFirstSaveFile = getIdFileFromIterable(files);
