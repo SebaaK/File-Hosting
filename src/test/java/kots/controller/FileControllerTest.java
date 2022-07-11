@@ -5,6 +5,7 @@ import kots.controller.dto.FileMetadataDto;
 import kots.model.File;
 import kots.repository.FileRepository;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -48,6 +49,11 @@ public class FileControllerTest {
 
     @Autowired
     private FileRepository fileRepository;
+
+    @AfterAll
+    void cleanUp() {
+        fileRepository.deleteAll();
+    }
 
     @Test
     public void shouldSaveFileEntityInDatabase() throws Exception {
@@ -104,10 +110,6 @@ public class FileControllerTest {
 
     @Test
     public void shouldReceiveNotFoundStatusResponseWhenGetNotExistIdFile() throws Exception {
-        // given
-        fileRepository.deleteAll();
-
-        // when & then
         mockMvc.perform(get(BASE_URL_FILE_ENDPOINT + "/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath(MESSAGE_PATH_RESPONSE, is("File not exist!")));
